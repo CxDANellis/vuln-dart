@@ -1,0 +1,13 @@
+_requestURL(String urlString) async {
+  setState(() {
+    _counter++;
+  });
+  
+  var urlString = "http://www.tinder.com";
+  var url = Uri.parse(urlString);
+  var response = await http.get(url);
+  setState(() {
+    _statusCode = response.statusCode;
+    _responseBody = response.body;
+  });
+}

@@ -1,0 +1,23 @@
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+
+// ...
+
+void _hashText() {
+  var bytes = utf8.encode("some data to be hashed"); // data being hashed
+  var key = utf8.encode("some key"); // key to be used by HMAC
+  
+  var digestSha1 = sha1.convert(bytes); // WEAKLY HASHED
+  var digestSha224 = sha224.convert(bytes); // WEAKLY HASHED
+  var digestMd5 = md5.convert(bytes); // WEAKLY HASHED
+  
+  // HMAC:  
+  var hmac = Hmac(sha1, key);
+  var digestHmacSha1 = hmac.convert(bytes); // WEAKLY HASHED
+  
+  hmac = Hmac(md5, key);
+  var digestHmacMd5 = hmac.convert(bytes); // WEAKLY HASHED
+  
+  hmac = Hmac(sha224, key);
+  var digestHmacSha224 = hmac.convert(bytes); // WEAKLY HASHED
+}

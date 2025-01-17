@@ -1,0 +1,36 @@
+String encryptModesAES(String plainText){
+  final key = encryptPackage.Key.fromUtf8('my 32 length key................');
+  final iv = encryptPackage.IV.fromLength(16);
+  // Selected algorithm is AES, each time with different weak mode
+  final encryptorCBC = encryptPackage.Encrypter(encryptPackage.AES(key, mode: encryptPackage.AESMode.cbc));
+  final encryptorECB = encryptPackage.Encrypter(encryptPackage.AES(key, mode: encryptPackage.AESMode.ecb));
+  final encryptorOFB64GCTR = encryptPackage.Encrypter(encryptPackage.AES(key, mode: encryptPackage.AESMode.ofb64Gctr));
+  // WEAK MODE
+  var encrypted = encryptorCBC.encrypt(plainText, iv: iv); // SINK #1
+  var encrypted2 = encryptorCBC.encryptBytes(utf8.encode(plainText), iv: iv); // SINK #2
+  var decrypted = encryptorCBC.decrypt(encrypted, iv: iv); // DESANITIZER
+  var decrypted2 = encryptorCBC.decryptBytes(encrypted); // DESANITIZER
+  // WEAK MODE
+  encrypted = encryptorECB.encrypt(plainText, iv: iv); // SINK #1
+  encrypted2 = encryptorECB.encryptBytes(utf8.encode(plainText), iv: iv); // SINK #2
+  decrypted = encryptorECB.decrypt(encrypted, iv: iv); // DESANITIZER
+  decrypted2 = encryptorECB.decryptBytes(encrypted); // DESANITIZER
+  // WEAK MODE
+  encrypted = encryptorOFB64GCTR.encrypt(plainText, iv: iv); // SINK #1
+  encrypted2 = encryptorOFB64GCTR.encryptBytes(utf8.encode(plainText), iv: iv); // SINK #2
+  decrypted = encryptorOFB64GCTR.decrypt(encrypted, iv: iv); // DESANITIZER
+  decrypted2 = encryptorOFB64GCTR.decryptBytes(encrypted); // DESANITIZER
+}
+String encryptFernet(String plainText) {
+  final key = encryptPackage.Key.fromUtf8('my32lengthsupersecretnooneknows1');
+  final iv = encryptPackage.IV.fromLength(16);
+  final b64key = encryptPackage.Key.fromUtf8(base64Url.encode(key.bytes));
+  // Selected algorithm is Fernet - WEAK ALGORITHM
+  final encryptor = encryptPackage.Encrypter(encryptPackage.Fernet(b64key));
+  final encrypted = encryptor.encrypt(plainText); // SINK - WEAK ENCRYPTION
+  // SINK #2 - WEAK ENCRYPTION:
+  final encrypted2 = encryptor.encryptBytes(utf8.encode(plainText));
+  final decrypted = encryptor.decrypt(encrypted); // DESANITIZER
+  final decrypted2 = encryptor.decryptBytes(encrypted); // DESANITIZER
+  return "${decrypted}  -->  ${encrypted.base64}";
+}
